@@ -42,7 +42,6 @@ public class AuthenticationServiceTest {
     JwtTokenUtil jwtTokenUtil;
 
 
-
     public static final String USERNAME = "rus@mail.ru";
     public static final String PASSWORD = "ruslan";
     public static final String TOKEN = "Token";
@@ -56,7 +55,7 @@ public class AuthenticationServiceTest {
     void login_Test() {
         //given
 
-        UserDetails userDetails = new UserTable(1L,"rus@mail.ru", "rus");
+        UserDetails userDetails = new UserTable(1L, "rus@mail.ru", "rus");
 
         //when
         when(userService.loadUserByUsername(USERNAME)).thenReturn(userDetails);
@@ -64,8 +63,9 @@ public class AuthenticationServiceTest {
 
         //then
         AuthenticationResponse expected = AUTHORIZATION_RESPONSE;
-        AuthenticationResponse result = authenticationService.signIn(AUTHORIZATION_REQUEST);
-        assertEquals(expected,result);
+        String result = authenticationService.signIn(AUTHORIZATION_REQUEST);
+        AuthenticationResponse authenticationResponse = new AuthenticationResponse(result);
+        assertEquals(expected, authenticationResponse);
         Mockito.verify(authenticationManager, Mockito.times(1)).authenticate(new UsernamePasswordAuthenticationToken(USERNAME, PASSWORD));
         Mockito.verify(authenticationRepository, Mockito.times(1)).putTokenAndUsername(TOKEN, USERNAME);
     }

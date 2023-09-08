@@ -23,7 +23,8 @@ public class AuthenticationController {
     @PostMapping("/login")
     public AuthenticationResponse signIn(@RequestBody AuthenticationRequest request) {
         log.info("SignIn is successfully");
-        return authenticationService.signIn(request);
+        String token =  authenticationService.signIn(request);
+        return new AuthenticationResponse(token);
     }
 
     @PostMapping("/logout")

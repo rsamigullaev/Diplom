@@ -8,11 +8,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.rus.cs.mapper.FileMapper;
 import ru.rus.cs.service.FileService;
 import ru.rus.cs.web.model.FileNameEditRequest;
 import ru.rus.cs.web.model.FileWebResponse;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -21,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FileController {
     private final FileService fileService;
+    private final FileMapper fileMapper;
 
     @PostMapping("/file")
     public ResponseEntity<?> uploadFile(
@@ -71,6 +75,10 @@ public class FileController {
     ) {
         final var files = fileService.getAllFiles(authToken, limit);
         log.info(String.format("Files %s received successfully", files));
-        return files;
+        List <FileWebResponse> fileWebResponse = files.stream()
+                .map(fileMapper::cloudFileToFileWebResponse)
+                .sorted(Comparator.comparing(FileWebResponse::filename))
+                .collect(Collectors.toList());
+        return fileWebResponse;
     }
 }

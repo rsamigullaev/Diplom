@@ -25,7 +25,7 @@ public class AuthenticationService {
     private final AuthenticationRepository authenticationRepository;
     private final UserRepository userRepository;
 
-    public AuthenticationResponse signIn(final AuthenticationRequest request) {
+    public String signIn(final AuthenticationRequest request) {
         final String username = request.login();
         final String password = request.password();
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
@@ -33,7 +33,7 @@ public class AuthenticationService {
         String token = jwtTokenUtil.generateToken(userDetails);
         authenticationRepository.putTokenAndUsername(token, username);
         log.info("User {} is authorized", username);
-        return new AuthenticationResponse(token);
+        return token;
     }
 
     public void signOut(String authToken) {

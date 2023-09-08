@@ -22,8 +22,10 @@ import ru.rus.cs.web.model.FileWebResponse;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -178,8 +180,12 @@ public class FileServiceTest {
         when(fileMapper.cloudFileToFileWebResponse(TEST_FILE)).thenReturn(fileWebResponse1);
         when(fileMapper.cloudFileToFileWebResponse(TEST_FILE_2)).thenReturn(fileWebResponse2);
 
-        List<FileWebResponse> resultList = fileService.getAllFiles(BEARER_TOKEN, 2);
-        assertEquals(expectedList, resultList);
+        List<FileTable> resultList = fileService.getAllFiles(BEARER_TOKEN, 2);
+        List<FileWebResponse> fileWebResponse = resultList.stream()
+                .map(fileMapper::cloudFileToFileWebResponse)
+                .sorted(Comparator.comparing(FileWebResponse::filename))
+                .collect(Collectors.toList());
+        assertEquals(expectedList, fileWebResponse);
 
     }
 

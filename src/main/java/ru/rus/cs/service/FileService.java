@@ -115,13 +115,14 @@ public class FileService {
         if (editedFile == null) {
             log.error("FileCloudException : Edited file not found ");
             throw new FileCloudException("Edited file not found ");
-        } else {
-            log.info(String.format("File %s edited successfully. New filename: %s", filename, editedFile.getFilename()));
         }
+
+        log.info(String.format("File %s edited successfully. New filename: %s", filename, editedFile.getFilename()));
+
     }
 
     @Transactional
-    public List<FileWebResponse> getAllFiles(String authToken, int limit) {
+    public List<FileTable> getAllFiles(String authToken, int limit) {
         final var userId = getUserIdFromToken(authToken);
         if (userId.isEmpty()) {
             log.error("Invalid auth-token: Unauthorized");
@@ -134,10 +135,7 @@ public class FileService {
             throw new FileCloudException("List of files not received ");
         }
 
-        return files.stream()
-                .map(fileMapper::cloudFileToFileWebResponse)
-                .sorted(Comparator.comparing(FileWebResponse::filename))
-                .collect(Collectors.toList());
+        return files;
     }
 
 
